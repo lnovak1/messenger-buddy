@@ -12,6 +12,8 @@
     <modules>
         <module>msg-consumer</module>
         <module>msg-producer</module>
+        <module>wpp-service</module>
+        <module>neural-responser</module>
     </modules>
 
     <properties>

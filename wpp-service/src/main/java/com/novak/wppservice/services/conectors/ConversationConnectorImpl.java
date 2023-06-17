@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 public class ConversationConnectorImpl implements ConversationConnector {
     @Override
     public void startConnection(String string) {
-    log.info("request to start connection");
+
+//        vai na porta localhost:8080/userconfig/4
+        log.info("request to start connection");
     }
 
     @Override
