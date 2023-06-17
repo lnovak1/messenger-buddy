@@ -14,18 +14,19 @@ public class StringProducerService {
     private final KafkaTemplate<String,String> kafkaTemplate;
 
     public void sendMessage(String message){
+        log.info("sending message: {}", message);
        var future =  kafkaTemplate.send("str-topic",message);
-       future.whenComplete((result,exception) ->{
-          if (result != null){
-              log.info("Send message with success ! message: {},partition {}, offset{}",
-                      message,
-                      result.getRecordMetadata().partition(),
-                      result.getRecordMetadata().offset());
-          }
-          if(exception!= null){
-              log.error("Error while sending message {}", exception.getStackTrace());
-          }
-       });
+//       future.whenComplete((result,exception) ->{
+//          if (result != null){
+//              log.info("Send message with success ! message: {},partition {}, offset{}",
+//                      message,
+//                      result.getRecordMetadata().partition(),
+//                      result.getRecordMetadata().offset());
+//          }
+//          if(exception!= null){
+//              log.error("Error while sending message {}", exception.getStackTrace());
+//          }
+//       });
 
     }
 }
