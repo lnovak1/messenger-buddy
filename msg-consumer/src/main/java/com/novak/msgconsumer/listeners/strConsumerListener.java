@@ -14,4 +14,9 @@ public class strConsumerListener {
         log.info("received message : {}", message);
     }
 
+//    @StrConsumerCustomListener(groupId = "group-2", containerFactory = "validMessageContainerFactory")
+//    public void check(String message){
+//        log.info("received message : {}", message);
+//    }
+
 }
