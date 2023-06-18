@@ -8,6 +8,7 @@ import java.io.Serializable;
 @Setter
 @Getter
 public class NeuralProcessResponse implements Serializable {
-
+    private String myNumber;
+    private String toNumber;
     private String message;
 }
