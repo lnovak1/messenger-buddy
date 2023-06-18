@@ -1,4 +1,4 @@
-package com.novak.conversationservice.domain;
+package com.novak.neuralresponser.domain;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,8 @@
 package com.novak.neuralresponser.services.neural;
 
 import com.novak.neuralresponser.custom.ConversationConsumerCustomListener;
+import com.novak.neuralresponser.custom.GptKeyUpdateConsumerCustomListener;
+import com.novak.neuralresponser.domain.GptKey;
 import com.novak.neuralresponser.domain.NeuralProcessRequest;
 import com.novak.neuralresponser.domain.NeuralProcessResponse;
 import com.theokanning.openai.completion.CompletionRequest;
@@ -29,8 +31,13 @@ public class NeuralConnectorImpl implements NeuralConnector{
 
 
     @Override
-    public void startConnection(String apiKey) {
-        openAiService =  new OpenAiService(apiKey, Duration.ofDays(1L));
+    @GptKeyUpdateConsumerCustomListener
+    public void startConnection(@Payload GptKey gptKey) {
+        if(openAiService!= null){
+            endConnection();
+        }
+
+        openAiService =  new OpenAiService(gptKey.getGptKey(), Duration.ofDays(7L));
     }
 
     @Override

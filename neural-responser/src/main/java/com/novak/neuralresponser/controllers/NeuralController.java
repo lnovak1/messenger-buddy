@@ -25,29 +25,29 @@ public class NeuralController {
     private final NeuralConnector neuralConnector;
     private final Gson gson;
 
-    @SneakyThrows
-    @PostMapping(value = "/start")
-    public ResponseEntity startConnection(){
-        try{
-            OkHttpClient client = new OkHttpClient();
-            Request request = new Request.Builder()
-//                .url(BASE_URL + "/api/tokens/gpt")
-                    .url("http://localhost:8200/neuralController/start")
-                    .method("GET",null)
-                    .build();
-            Call call = client.newCall(request);
-            Response response = call.execute();
-            ResponseBody body = response.body();
-            String string = body.string();
-
-            NeuralStartDto neuralStartDto = gson.fromJson(string, NeuralStartDto.class);
-            neuralConnector.startConnection(neuralStartDto.getApiKey());
-            return ResponseEntity.status(HttpStatus.OK).body("Connection started");
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while trying to start Neural connection");
-        }
-
-    }
+//    @SneakyThrows
+//    @PostMapping(value = "/start")
+//    public ResponseEntity startConnection(){
+//        try{
+//            OkHttpClient client = new OkHttpClient();
+//            Request request = new Request.Builder()
+////                .url(BASE_URL + "/api/tokens/gpt")
+//                    .url("http://localhost:8200/neuralController/start")
+//                    .method("GET",null)
+//                    .build();
+//            Call call = client.newCall(request);
+//            Response response = call.execute();
+//            ResponseBody body = response.body();
+//            String string = body.string();
+//
+//            NeuralStartDto neuralStartDto = gson.fromJson(string, NeuralStartDto.class);
+//            neuralConnector.startConnection(neuralStartDto.getApiKey());
+//            return ResponseEntity.status(HttpStatus.OK).body("Connection started");
+//        }catch (Exception e){
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while trying to start Neural connection");
+//        }
+//
+//    }
 
     @SneakyThrows
     @PostMapping(value = "/stop")
@@ -62,20 +62,20 @@ public class NeuralController {
 
     }
 
-    @SneakyThrows
-    @GetMapping(value = "/start")
-    public ResponseEntity<NeuralStartDto> get(){
-
-        Dotenv load = Dotenv.configure()
-                .directory("./")
-                .load();
-        String gptApiKey = load.get("GPT_API_KEY");
-
-        NeuralStartDto neuralStartDto = new NeuralStartDto();
-        neuralStartDto.setApiKey(gptApiKey);
-
-        return ResponseEntity.status(HttpStatus.OK).body(neuralStartDto);
-    }
+//    @SneakyThrows
+//    @GetMapping(value = "/start")
+//    public ResponseEntity<NeuralStartDto> get(){
+//
+//        Dotenv load = Dotenv.configure()
+//                .directory("./")
+//                .load();
+//        String gptApiKey = load.get("GPT_API_KEY");
+//
+//        NeuralStartDto neuralStartDto = new NeuralStartDto();
+//        neuralStartDto.setApiKey(gptApiKey);
+//
+//        return ResponseEntity.status(HttpStatus.OK).body(neuralStartDto);
+//    }
 
 
 }
