@@ -10,9 +10,6 @@
     <!-- Configurações e dependências do projeto principal -->
     
     <modules>
-        <module>msg-consumer</module>
-        <module>msg-producer</module>
-        <module>wpp-service</module>
         <module>neural-responser</module>
         <module>conversation-service</module>
     </modules>

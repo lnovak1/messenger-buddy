@@ -36,16 +36,6 @@ services:
     environment:
       KAFKA_BROKERCONNECT: kafka:29092
 
-#  conversation:
-#    image: lnovak1/wpp-service:1.0.0
-#    networks:
-#      - broker-kafka
-#    depends_on:
-#      - kafka
-#    ports:
-#      - "8100:8100"
-#    environment:
-#      KAFKA_HOST: kafka:29092
 
 networks:
   broker-kafka:
