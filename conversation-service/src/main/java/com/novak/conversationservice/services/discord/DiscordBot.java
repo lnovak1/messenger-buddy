@@ -1,6 +1,7 @@
 package com.novak.conversationservice.services.discord;
 
 import com.novak.conversationservice.custom.NeuralConsumerCustomListener;
+import com.novak.conversationservice.domain.GptKey;
 import com.novak.conversationservice.domain.NeuralProcessRequest;
 import com.novak.conversationservice.domain.NeuralProcessResponse;
 import com.novak.conversationservice.services.conversation.ConversationConnector;
@@ -131,6 +132,7 @@ public class DiscordBot extends ListenerAdapter implements ConversationConnector
     private void setupCommand(SlashCommandInteractionEvent event){
         String gptKey = event.getOption(GPT_KEY_COMMAND).getAsString();
         log.info("RECEIVED GPT CHANGE REQUEST WITH KEY=> {}", gptKey);
+        kafkaTemplate.send("gpt-key-change-topic",new GptKey(gptKey));
     }
 
     @Override
