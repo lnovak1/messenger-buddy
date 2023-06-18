@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 @Setter
 @Getter
-public class NeuralProcessRequest implements Serializable {
+public class NeuralProcessResponse implements Serializable {
 
     private String message;
 }

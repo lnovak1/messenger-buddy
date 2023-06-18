@@ -1,5 +1,6 @@
 package com.novak.msgproducer.resources;
 
+import com.novak.msgproducer.domain.Message;
 import com.novak.msgproducer.services.StringProducerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,4 +20,13 @@ public class StringProducerResource {
     producerService.sendMessage(message);
     return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+
+
+
+        @PostMapping("/json")
+        public ResponseEntity<?> sendMessage(@RequestBody Message message){
+            producerService.sendJsonMessage(message);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        }
 }

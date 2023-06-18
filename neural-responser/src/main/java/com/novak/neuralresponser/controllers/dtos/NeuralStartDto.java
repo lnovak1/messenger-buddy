@@ -7,5 +7,4 @@ import lombok.Setter;
 @Setter
 public class NeuralStartDto {
     private String apiKey;
-    private  String model;
 }

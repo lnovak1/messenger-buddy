@@ -1,8 +1,7 @@
-package com.novak.msgproducer.config;
+package com.novak.neuralresponser.config;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.admin.AdminClientConfig;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +24,7 @@ public class KafkaAdminConfig {
     @Bean
     public KafkaAdmin.NewTopics topics(){
         return new KafkaAdmin.NewTopics(
-                TopicBuilder.name("conversation-topic").partitions(2).replicas(1).build()
+                TopicBuilder.name("neural-topic").partitions(2).replicas(1).build()
         );
     }
 }

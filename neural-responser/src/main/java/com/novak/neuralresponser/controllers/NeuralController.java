@@ -42,11 +42,8 @@ public class NeuralController {
         NeuralStartDto neuralStartDto = gson.fromJson(string, NeuralStartDto.class);
 
 
-        neuralConnector.startConnection(neuralStartDto.getApiKey(),neuralStartDto.getModel());
-        NeuralProcessRequest neuralProcessRequest = new NeuralProcessRequest();
-        neuralProcessRequest.setMessage("Oi amor!!! bom diia!");
-        String bestMatch = neuralConnector.processBestMatch(neuralProcessRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(bestMatch);
+        neuralConnector.startConnection(neuralStartDto.getApiKey());
+        return ResponseEntity.status(HttpStatus.OK).body("Connection started");
     }
 
     @SneakyThrows
@@ -59,7 +56,6 @@ public class NeuralController {
         String gptApiKey = load.get("GPT_API_KEY");
 
         NeuralStartDto neuralStartDto = new NeuralStartDto();
-        neuralStartDto.setModel("text-davinci-002-render-sha");
         neuralStartDto.setApiKey(gptApiKey);
 
         return ResponseEntity.status(HttpStatus.OK).body(neuralStartDto);
