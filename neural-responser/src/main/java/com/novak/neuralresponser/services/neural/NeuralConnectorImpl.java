@@ -59,6 +59,7 @@ public class NeuralConnectorImpl implements NeuralConnector{
         log.info("Sending message: {}", text);
          NeuralProcessResponse neuralProcessResponse = new NeuralProcessResponse();
          neuralProcessResponse.setMessage(text);
+         neuralProcessResponse.setUserId(neuralProcessRequest.getUserId());
         kafkaTemplate.send("neural-topic",neuralProcessResponse);
         return text;
     }

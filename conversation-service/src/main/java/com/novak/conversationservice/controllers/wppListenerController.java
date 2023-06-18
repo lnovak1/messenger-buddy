@@ -3,7 +3,7 @@ package com.novak.conversationservice.controllers;
 
 import com.google.gson.Gson;
 import com.novak.conversationservice.controllers.dtos.ConversationDto;
-import com.novak.conversationservice.conversation.ConversationConnector;
+import com.novak.conversationservice.services.conversation.ConversationConnector;
 import io.github.cdimascio.dotenv.Dotenv;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -13,7 +13,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 @Log4j2
@@ -22,13 +24,21 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/conversation")
 public class wppListenerController {
 
-    private final ConversationConnector conversationConnector;
+//    private final ConversationConnector conversationConnector;
     private final Gson gson;
+
+
     @SneakyThrows
-    @PostMapping(value = "/wpp-listener")
-    public ResponseEntity startConnection(@RequestBody String string){
-            log.info("RECEIVING WPP MSG::::::::::{}",string);
-        return ResponseEntity.status(HttpStatus.OK).build();
+    @PostMapping(value = "/webhook", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            produces = MediaType.APPLICATION_XML_VALUE)
+    public void handleWebhook(@RequestBody MultiValueMap<String, String> requestParams) {
+        String messageBody = requestParams.getFirst("Body");
+        String senderNumber = requestParams.getFirst("From");
+
+        // Handle the incoming message here
+        log.info("Received message from " + senderNumber + ": " + messageBody);
+
+
     }
 
     @SneakyThrows
@@ -47,7 +57,7 @@ public class wppListenerController {
             String string = body.string();
 
             ConversationDto conversationDto = gson.fromJson(string, ConversationDto.class);
-            conversationConnector.startConnection(conversationDto.getAccountSid(),conversationDto.getTwilioToken());
+//            conversationConnector.startConnection(conversationDto.getAccountSid(),conversationDto.getTwilioToken());
             return ResponseEntity.status(HttpStatus.OK).body("Connection started");
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while trying to start Neural connection");
@@ -68,7 +78,7 @@ public class wppListenerController {
         ConversationDto conversationDto = new ConversationDto();
         conversationDto.setAccountSid(accountSid);
         conversationDto.setTwilioToken(twilioToken);
-        conversationConnector.startConnection(accountSid,twilioToken);
+//        conversationConnector.startConnection(accountSid,twilioToken);
 
         return ResponseEntity.status(HttpStatus.OK).body(conversationDto);
     }
@@ -78,7 +88,7 @@ public class wppListenerController {
     public ResponseEntity endConnection(){
         try{
 
-            conversationConnector.endConnection();
+//            conversationConnector.endConnection();
             return ResponseEntity.status(HttpStatus.OK).body("Connection stopped");
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while trying to stopped Neural connection");
