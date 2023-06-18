@@ -1,13 +1,14 @@
 package com.novak.neuralresponser.domain;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
 
-@Setter
+@RequiredArgsConstructor
 @Getter
 public class NeuralProcessResponse implements Serializable {
-    private String userId;
-    private String message;
+    private final String userId;
+    private final String message;
 }

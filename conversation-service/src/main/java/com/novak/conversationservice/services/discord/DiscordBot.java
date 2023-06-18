@@ -14,7 +14,9 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageType;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -51,6 +53,7 @@ public class DiscordBot extends ListenerAdapter implements ConversationConnector
     private String discordBotToken;
     private final KafkaTemplate<String, Serializable> kafkaTemplate;
     private JDA jda;
+
     @SneakyThrows
     @PostConstruct
     @Override
@@ -63,7 +66,7 @@ public class DiscordBot extends ListenerAdapter implements ConversationConnector
         jda = JDABuilder.createDefault(discordBotToken)
                 .addEventListeners(this)
                 .setActivity(Activity.listening("your truly desires"))
-                .enableIntents(GatewayIntent.DIRECT_MESSAGES,GatewayIntent.DIRECT_MESSAGE_TYPING)
+                .enableIntents(GatewayIntent.DIRECT_MESSAGES, GatewayIntent.DIRECT_MESSAGE_TYPING)
                 .build();
         jda.awaitReady();
 
@@ -73,73 +76,78 @@ public class DiscordBot extends ListenerAdapter implements ConversationConnector
 //        CommandData gptKey = new CommandDataImpl("setup", "Give me the power of unlimited MAGIC (also my gptAPI key)")
 //                .addOptions(new OptionData(OptionType.STRING,"gptKey","my gpt key", true));
 
-        jda.updateCommands().addCommands(Commands.slash(BUDDY_COMMAND,"i will save you with my guide my friend!")
-                .addOptions(new OptionData(OptionType.STRING, USER_ID_COMMAND,"user who needs my help", true)
-                        , new OptionData(OptionType.STRING, MESSAGE_COMMAND,"give me the introduction on how i can help your friend", true)),
+        jda.updateCommands().addCommands(Commands.slash(BUDDY_COMMAND, "i will save you with my guide my friend!")
+                        .addOptions(new OptionData(OptionType.STRING, USER_ID_COMMAND, "user who needs my help", true)
+                                , new OptionData(OptionType.STRING, MESSAGE_COMMAND, "give me the introduction on how i can help your friend", true)),
                 Commands.slash(SETUP_COMMAND, "Give me the power of unlimited MAGIC (also my gptAPI key)")
-                        .addOptions(new OptionData(OptionType.STRING,GPT_KEY_COMMAND,"my gpt key", true))).queue();
+                        .addOptions(new OptionData(OptionType.STRING, GPT_KEY_COMMAND, "my gpt key", true))).queue();
     }
-
 
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-//
-        String message = event.getMessage().getContentDisplay();
-        log.info("MY BOT IS RECEIVING MESSAGEES=====>{}",message);
-        User author = event.getAuthor();
 
-        NeuralProcessRequest neuralProcessRequest = new NeuralProcessRequest();
-        neuralProcessRequest.setMessage(message);
-        neuralProcessRequest.setUserId(author.getId());
-        kafkaTemplate.send("conversation-topic",neuralProcessRequest);
+        if (!event.getMessage().getType().equals(MessageType.SLASH_COMMAND)) {
+
+
+            String message = event.getMessage().getContentDisplay();
+            log.info("MY BOT IS RECEIVING MESSAGEES=====>{}", message);
+            User author = event.getAuthor();
+
+            NeuralProcessRequest neuralProcessRequest = new NeuralProcessRequest();
+            neuralProcessRequest.setMessage(message);
+            neuralProcessRequest.setUserId(author.getId());
+            kafkaTemplate.send("conversation-topic", neuralProcessRequest);
+        }
     }
 
     @Override
     public void onGenericEvent(@NotNull GenericEvent event) {
-        log.info("MY BOT IS RECEIVING EVENTS=====>{}",event.toString());
+        log.info("MY BOT IS RECEIVING EVENTS=====>{}", event.toString());
     }
 
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         if (event.getName().equals(BUDDY_COMMAND)) {
             buddyCommand(event);
-       if(event.getName().equals(SETUP_COMMAND)){
-           setupCommand(event);
-       }
-    }
+        }
+        if (event.getName().equals(SETUP_COMMAND)) {
+            setupCommand(event);
+        }
+
     }
 
-    private void buddyCommand(SlashCommandInteractionEvent event){
-        try{
+    private void buddyCommand(SlashCommandInteractionEvent event) {
+        try {
             String userId = event.getOption(USER_ID_COMMAND).getAsString();
             String startMessage = event.getOption(MESSAGE_COMMAND).getAsString();
             User userById = jda.getUserById(userId);
-            if(userById.getId()!= null){
+            if (userById.getId() != null) {
                 NeuralProcessRequest neuralProcessRequest = new NeuralProcessRequest();
                 neuralProcessRequest.setMessage(startMessage);
                 neuralProcessRequest.setUserId(userById.getId());
-                kafkaTemplate.send("conversation-topic",neuralProcessRequest);
+                kafkaTemplate.send("conversation-topic", neuralProcessRequest);
                 event.reply("entendo e entrarei em contato!").queue();
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             event.reply("não encontrei esse usuario").queue();
             log.error(e);
         }
 
     }
 
-    private void setupCommand(SlashCommandInteractionEvent event){
+    private void setupCommand(SlashCommandInteractionEvent event) {
         String gptKey = event.getOption(GPT_KEY_COMMAND).getAsString();
         log.info("RECEIVED GPT CHANGE REQUEST WITH KEY=> {}", gptKey);
-        kafkaTemplate.send("gpt-key-change-topic",new GptKey(gptKey));
+        kafkaTemplate.send("gpt-key-change-topic", new GptKey(gptKey));
+        event.reply("Origado , agora vou ficar com um poder de mais de 9000").queue();
     }
 
     @Override
     @NeuralConsumerCustomListener
     public String consumeBestMatch(@Payload NeuralProcessResponse neuralProcessResponse) {
-        String message =neuralProcessResponse.getMessage();
-        log.info("RECEIVED IN CONVERSATION::::: {}",message);
+        String message = neuralProcessResponse.getMessage();
+        log.info("RECEIVED IN CONVERSATION::::: {}", message);
         User user = this.jda.getUserById(neuralProcessResponse.getUserId());
         PrivateChannel channel = user.openPrivateChannel().complete();
         Consumer<Message> callback = (response) -> log.info("Sent Message {}", response);
