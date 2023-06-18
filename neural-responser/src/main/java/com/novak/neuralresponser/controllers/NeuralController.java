@@ -50,6 +50,19 @@ public class NeuralController {
     }
 
     @SneakyThrows
+    @PostMapping(value = "/stop")
+    public ResponseEntity endConnection(){
+        try{
+
+            neuralConnector.endConnection();
+            return ResponseEntity.status(HttpStatus.OK).body("Connection stopped");
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while trying to stopped Neural connection");
+        }
+
+    }
+
+    @SneakyThrows
     @GetMapping(value = "/start")
     public ResponseEntity<NeuralStartDto> get(){
 
