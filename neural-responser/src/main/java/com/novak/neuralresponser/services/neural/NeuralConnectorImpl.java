@@ -66,6 +66,12 @@ public class NeuralConnectorImpl implements NeuralConnector {
             CompletionResult completion = openAiService.createCompletion(completionRequest);
 
             String text = completion.getChoices().get(0).getText();
+            if(text.contains("\n\n")){
+                String[] split = text.split("\n\n");
+                if(split.length>1){
+                    text = split[1];
+                }
+            }
             log.info("Sending message: {}", text);
             NeuralProcessResponse neuralProcessResponse = new NeuralProcessResponse(neuralProcessRequest.getUserId(),text);
             kafkaTemplate.send("neural-topic", neuralProcessResponse);
