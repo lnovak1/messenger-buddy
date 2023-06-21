@@ -5,7 +5,6 @@ import com.novak.conversationservice.domain.GptKey;
 import com.novak.conversationservice.domain.NeuralProcessRequest;
 import com.novak.conversationservice.domain.NeuralProcessResponse;
 import com.novak.conversationservice.services.conversation.ConversationConnector;
-import io.github.cdimascio.dotenv.Dotenv;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -16,28 +15,22 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageType;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.requests.GatewayIntent;
-import net.dv8tion.jda.internal.interactions.CommandDataImpl;
+import net.dv8tion.jda.api.requests.restaction.CacheRestAction;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import javax.security.auth.login.LoginException;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.function.Consumer;
 
 @Log4j2
@@ -59,22 +52,13 @@ public class DiscordBot extends ListenerAdapter implements ConversationConnector
     @Override
     public void startConnection() {
         log.info("====================================================HEY HEY IAM HERE===================================================");
-        Dotenv load = Dotenv.configure()
-                .directory("./.././")
-                .load();
-        discordBotToken = load.get("DISCORD_BOT_TOKEN");
+        discordBotToken = "";
         jda = JDABuilder.createDefault(discordBotToken)
                 .addEventListeners(this)
                 .setActivity(Activity.listening("your truly desires"))
                 .enableIntents(GatewayIntent.DIRECT_MESSAGES, GatewayIntent.DIRECT_MESSAGE_TYPING)
                 .build();
         jda.awaitReady();
-
-//        CommandData buddy = new CommandDataImpl("buddy", "i will save you with my guide my friend!")
-//                .addOptions(new OptionData(OptionType.STRING, "userId","user who needs my help", true)
-//                        , new OptionData(OptionType.STRING, "msg","give me the introduction on how i can help your friend", true));
-//        CommandData gptKey = new CommandDataImpl("setup", "Give me the power of unlimited MAGIC (also my gptAPI key)")
-//                .addOptions(new OptionData(OptionType.STRING,"gptKey","my gpt key", true));
 
         jda.updateCommands().addCommands(Commands.slash(BUDDY_COMMAND, "i will save you with my guide my friend!")
                         .addOptions(new OptionData(OptionType.STRING, USER_ID_COMMAND, "user who needs my help", true)
@@ -140,7 +124,7 @@ public class DiscordBot extends ListenerAdapter implements ConversationConnector
         String gptKey = event.getOption(GPT_KEY_COMMAND).getAsString();
         log.info("RECEIVED GPT CHANGE REQUEST WITH KEY=> {}", gptKey);
         kafkaTemplate.send("gpt-key-change-topic", new GptKey(gptKey));
-        event.reply("Origado , agora vou ficar com um poder de mais de 9000").queue();
+        event.reply("Obrigado , agora vou ficar com um poder de mais de 9000").queue();
     }
 
     @Override
@@ -148,7 +132,8 @@ public class DiscordBot extends ListenerAdapter implements ConversationConnector
     public String consumeBestMatch(@Payload NeuralProcessResponse neuralProcessResponse) {
         String message = neuralProcessResponse.getMessage();
         log.info("RECEIVED IN CONVERSATION::::: {}", message);
-        User user = this.jda.getUserById(neuralProcessResponse.getUserId());
+        CacheRestAction<User> userCacheRestAction = this.jda.retrieveUserById(neuralProcessResponse.getUserId());
+        User user = userCacheRestAction.complete();
         PrivateChannel channel = user.openPrivateChannel().complete();
         Consumer<Message> callback = (response) -> log.info("Sent Message {}", response);
         channel.sendMessage(message).queue(callback);
