@@ -105,7 +105,7 @@ public class DiscordBot extends ListenerAdapter implements ConversationConnector
         try {
             String userId = event.getOption(USER_ID_COMMAND).getAsString();
             String startMessage = event.getOption(MESSAGE_COMMAND).getAsString();
-            User userById = jda.getUserById(userId);
+            User userById = jda.retrieveUserById(userId).complete();
             if (userById.getId() != null) {
                 NeuralProcessRequest neuralProcessRequest = new NeuralProcessRequest();
                 neuralProcessRequest.setMessage(startMessage);
