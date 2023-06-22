@@ -36,27 +36,27 @@ services:
     environment:
       KAFKA_BROKERCONNECT: kafka:29092
 
-  conversation:
-    image: lnovak1/conversation-service:1.0.2
-    networks:
-      - broker-kafka
-    depends_on:
-      - kafka
-    ports:
-      - "8300:8300"
-    environment:
-      KAFKA_HOST: kafka:29092
+#  conversation:
+#    image: lnovak1/conversation-service:1.0.3
+#    networks:
+#      - broker-kafka
+#    depends_on:
+#      - kafka
+#    ports:
+#      - "8300:8300"
+##    environment:
+##      KAFKA_HOST: kafka:29092
 
-  neural:
-    image: lnovak1/neural-responser:1.0.1
-    networks:
-      - broker-kafka
-    depends_on:
-      - kafka
-    ports:
-      - "8200:8200"
-    environment:
-      KAFKA_HOST: kafka:29092
+#  neural:
+#    image: lnovak1/neural-responser:1.0.3
+#    networks:
+#      - broker-kafka
+#    depends_on:
+#      - kafka
+#    ports:
+#      - "8200:8200"
+##    environment:
+##      KAFKA_HOST: kafka:29092
 
 networks:
   broker-kafka:

@@ -1,0 +1,12 @@
+{
+  "name": "messenger-buddy",
+  "version": "1.0.0",
+  "description": "messenger-buddy",
+  "scripts": {
+    "kafka-init": "docker-compose up -d",
+    "build": "cd neural-responser && mvn clean package && cd ../conversation-service && mvn clean package",
+    "start": "cd neural-responser/target && java -jar neural-responser-0.0.1-SNAPSHOT.jar && cd conversation-service/target && java -jar conversation-service-0.0.1-SNAPSHOT.jar"
+  },
+  "author": "Leonardo Novak",
+  "license": "MIT"
+}

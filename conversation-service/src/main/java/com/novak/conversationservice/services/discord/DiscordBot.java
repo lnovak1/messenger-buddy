@@ -52,7 +52,7 @@ public class DiscordBot extends ListenerAdapter implements ConversationConnector
     @Override
     public void startConnection() {
         log.info("====================================================HEY HEY IAM HERE===================================================");
-        discordBotToken = "";
+        discordBotToken = "INSERT YOUR DISCORD KEY HERE";
         jda = JDABuilder.createDefault(discordBotToken)
                 .addEventListeners(this)
                 .setActivity(Activity.listening("your truly desires"))
