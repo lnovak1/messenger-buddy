@@ -34,6 +34,8 @@ Uma vez no mesmo servidor utilize o comando  <br> **/setup** **<YOUR_GPTKEY>** p
 Pronto , agora é só conversar com ele ou usar o comando **/buddy** **<FRIEND_ID>**  **MESSAGE**  para ele começar a conversar com um amigo seu ,
 lembre que esse amigo deve compartilhar ao menos um servidor com o Bot
 
+<br> É possível verificar os tópicos de conversação do kafka pelo Kafdrop em : http://localhost:19000/
+
 ## Licença
 
 Este projeto está licenciado sob a [Licença MIT](https://opensource.org/licenses/MIT).
