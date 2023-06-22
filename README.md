@@ -18,7 +18,7 @@ para rodar esse projeto em sua máquina, é necessárrio algumas dependências e
 1. Clonar o repositório do Git
 2. Após clonar o projeto encontre o arquivo DiscordBot.java e altere o campo discordBotToken = "INSERT YOUR DISCORD KEY HERE"; com sua chave obtida do bot Discord
 3. A partir de agora todos os comandos estão presentes no package.json, começe subindo o container onde está o kafka. com o comando **npm run kafka-init**
-4. agora é hora de compilar os 2 projetos, par aisso rode **npm run build**
+4. agora é hora de compilar os 2 projetos, para isso rode **npm run build**
 5. e por final para iniciar o projeto utilize **npm run start**
 
 ## Uso
@@ -27,7 +27,7 @@ Uma vez que a aplicação esteja rodando, é necessário autorizar o bot em seu 
 <br> https://discord.com/oauth2/authorize?client_id=<YOUR_DISCORD_CLIENT_ID>&scope=bot&permissions=8 <br>
 onde <YOUR_DISCORD_CLIENT_ID> é o client id da sua aplicação do discord , e pode ser obtido aqui : <br> https://discord.com/developers/applications <br>
 
-<br> É importante lembrar que o bot só consegue conversar com pessoas cujo as quais cmpartilhem pelo menos um discord com o bot.<br>
+<br> É importante lembrar que o bot só consegue conversar com pessoas cujo as quais compartilhem pelo menos um discord com o bot.<br>
 
 Uma vez no mesmo servidor utilize o comando  <br> **/setup** **<YOUR_GPTKEY>** passando sua chave da api do GPT <br>
 
